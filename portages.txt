@@ -1,0 +1,10 @@
+Manomin, Winnange, 0.6
+Winnange, Upper Stewart, 0.8
+Lower Stewart, Upper Stewart, 0.1
+Lower Stewart, Geejay, 0.4
+Manomin, Geejay, 0.75
+Crabclaw, Winnange, 1.25
+Crabclaw, Eagle, 0.35
+Winnange, Eagle, 0.12
+Falcon, West Hawk, 1.7
+West Hawk, Caddy, 2.4
