@@ -1,3 +1,4 @@
+import java.util.*;
 public class Portage {
     private double distance;
     private Lake lake1;
@@ -28,6 +29,14 @@ public class Portage {
         + "are connected by a portage of " + String.format("%.2f", distance) + " km";
         return result;
     }
+    public static String listOtherEnd(ArrayList<Portage> portages, Lake lake){
+        String s = "";
+        for(Portage p: portages){
+            s += p.otherEnd(lake);
+            s += ", ";
+        }
+        return s;
+    }
     public String otherEnd(String lakeName){
         if(lakeName == lake1.getName()){
             return lake2.getName();
@@ -50,7 +59,7 @@ public class Portage {
             return null;
         }
     }
-    public boolean sameOrOtherLake(Lake lake){
+    public boolean ifSameOrOtherLake(Lake lake){
         if(lake == lake1 || lake == lake2){
             return true;
         }

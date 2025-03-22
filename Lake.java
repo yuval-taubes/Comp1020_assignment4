@@ -16,11 +16,30 @@ public class Lake{
         return waterQual;
     }
     public String toString(){
-        String result = name + " has " + waterQual + " water quality";
+        String result = name + " has " + waterQual + " water quality, and is connected to: "
+        + Portage.listOtherEnd(portages, this); 
         return result;
     }
-    public void addPortage(Portage portage){
-        if(portage.otherEnd(name) == name);
-        portages.add(portage);
+    public boolean addPortage(Portage portage){
+        if(portage.ifSameOrOtherLake(this)){
+            portages.add(portage);
+            return true;
+        }
+        else{
+            return false;
+        }
     }
+    public ArrayList<Portage> getPortageList(){
+        return portages;
+    }
+    public Lake findLake(String name){
+        for (Lake lake : lakes) {
+            if (lake.getName().equals(name)) {
+                return lake;
+            }
+        }
+        return null;
+    }
+    
+
 }
