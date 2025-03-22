@@ -5,10 +5,12 @@ public class Portage {
     private Lake lake2;
 
     public Portage(Lake lake1, Lake lake2, double distance){
-        lake1 = lake1;
-        lake2 = lake2;
-        distance = distance;
+        this.lake1 = lake1;
+        this.lake2 = lake2;
+        this.distance = distance;
     }
+    
+    
     public String getStartName(){
         return lake1.getName();
     }
@@ -29,25 +31,20 @@ public class Portage {
         + "are connected by a portage of " + String.format("%.2f", distance) + " km";
         return result;
     }
-    public static String listOtherEnd(ArrayList<Portage> portages, Lake lake){
-        String s = "";
-        for(Portage p: portages){
-            s += p.otherEnd(lake);
-            s += ", ";
-        }
-        return s;
+    public String listOtherEnd(Lake current) {
+        return (current.equals(lake1)) ? lake2.getName() : lake1.getName();
     }
+    
     public String otherEnd(String lakeName){
-        if(lakeName == lake1.getName()){
+        if(lakeName.equals(lake1.getName())){
             return lake2.getName();
         }
-        else if(lakeName == lake2.getName()){
+        else if(lakeName.equals(lake2.getName())){
             return lake1.getName();
         }
-        else{
-            return null;
-        }
+        return null;
     }
+    
     public Lake otherEnd(Lake lake){
         if(lake == lake1){
             return lake2;

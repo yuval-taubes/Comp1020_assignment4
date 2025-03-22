@@ -41,18 +41,22 @@ public class Map {
         return null;
     }
 
-    public double getTotalPortageDistance() {
-        HashSet<Portage> uniquePortages = new HashSet<>();
-        for (Lake lake : lakes) {
-            uniquePortages.addAll(lake.getPortageList());
-        }
-
+    public double getTotalPortageDistance(){
+        ArrayList<Portage> countedPortages = new ArrayList<>();
         double totalDistance = 0;
-        for (Portage portage : uniquePortages) {
-            totalDistance += portage.getDistance();
+    
+        for (Lake lake : lakes) {
+            for (Portage portage : lake.getPortageList()) {
+                // Only count if it hasn't been added before
+                if (!countedPortages.contains(portage)) {
+                    countedPortages.add(portage);
+                    totalDistance += portage.getDistance();
+                }
+            }
         }
-        return totalDistance / 2; // Since each portage is counted twice
+        return totalDistance;
     }
+    
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append(name).append(" contains the lakes:\n");

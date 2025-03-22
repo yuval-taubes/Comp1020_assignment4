@@ -12,14 +12,24 @@ public class Lake{
     public String getName(){
         return name;
     }
-    public String getWaterQual(){
+    public String getWaterQuality(){
         return waterQual;
     }
-    public String toString(){
-        String result = name + " has " + waterQual + " water quality, and is connected to: "
-        + Portage.listOtherEnd(portages, this); 
-        return result;
+    @Override
+    public String toString() {
+        String result = name + " has " + waterQual + " water quality, and is connected to: ";
+        
+        if (portages.isEmpty()) {
+            return result + "no other lakes.";
+        }
+    
+        for (Portage p : portages) {
+            result += p.listOtherEnd(this) + ", ";
+        }
+    
+        return result.substring(0, result.length() - 2); // Remove trailing ", "
     }
+    
     public boolean addPortage(Portage portage){
         if(portage.ifSameOrOtherLake(this)){
             portages.add(portage);
@@ -32,14 +42,7 @@ public class Lake{
     public ArrayList<Portage> getPortageList(){
         return portages;
     }
-    public Lake findLake(String name){
-        for (Lake lake : lakes) {
-            if (lake.getName().equals(name)) {
-                return lake;
-            }
-        }
-        return null;
-    }
+
     
 
 }
