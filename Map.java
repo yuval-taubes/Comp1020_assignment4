@@ -34,6 +34,7 @@ public class Map {
         Portage newPortage = new Portage(lake1, lake2, distance);
         lake1.addPortage(newPortage);
         lake2.addPortage(newPortage);
+        portages.add(newPortage);
         return true;
     }
     public ArrayList<Lake> getLakes(){
@@ -90,10 +91,10 @@ public class Map {
                 String lakeName = parts[0].trim();
                 String waterQuality = parts[1].trim();
                 
-                if (getLakeByName(lakeName) != null) {
+                if (findLake(lakeName) != null) {
                     System.out.println("A lake with the name " + lakeName + " already exists! Not adding again.");
                 } else {
-                    lakes.add(new Lake(lakeName, waterQuality));
+                    addLake(lakeName, waterQuality);
                 }
             }
         } catch (IOException e) {
@@ -119,28 +120,28 @@ public class Map {
                     continue;
                 }
                 
-                Lake lake1 = getLakeByName(lakeName1);
-                Lake lake2 = getLakeByName(lakeName2);
+                Lake lake1 = findLake(lakeName1);
+                Lake lake2 = findLake(lakeName2);
                 
                 if (lake1 == null || lake2 == null) {
                     System.out.println("Failed to add portage!");
                     continue;
                 }
                 
-                portages.add(new Portage(lake1, lake2, distance));
+                addPortage(lakeName1, lakeName2, distance);
             }
         } catch (IOException e) {
             System.out.println("Error reading file: " + filename);
         }
     }
 
-    private Lake getLakeByName(String name) {
-        for (Lake lake : lakes) {
-            if (lake.getName().equals(name)) {
-                return lake;
-            }
-        }
-        return null;
-    }
+    // private Lake findLake(String name) {
+    //     for (Lake lake : lakes) {
+    //         if (lake.getName().equals(name)) {
+    //             return lake;
+    //         }
+    //     }
+    //     return null;
+    // }
 
 }
