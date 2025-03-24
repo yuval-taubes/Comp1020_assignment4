@@ -30,7 +30,6 @@ public class Route {
         return totalDistance;
     }
 
-    @Override
     public String toString() {
         String result = "Route from " + startLake + " to " + endLake +
                         " is " + String.format("%.2f", getDistance()) + " km: ";

@@ -69,17 +69,17 @@ public class Map {
         return totalDistance;
     }
     
-    @Override
-    public String toString(){
-        StringBuilder sb = new StringBuilder();
-        sb.append(name).append(" contains the lakes:\n");
-    
+
+    public String toString() {
+        String result = name + " contains the lakes:\n";
+        
         for (Lake lake : lakes) {
-            sb.append(lake.toString()).append("\n");
+            result += lake.toString() + "\n";
         }
-    
-        return sb.toString();
+        
+        return result;
     }
+    
     
        public void loadLakes(String filename) {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
@@ -135,13 +135,86 @@ public class Map {
         }
     }
 
-    // private Lake findLake(String name) {
-    //     for (Lake lake : lakes) {
-    //         if (lake.getName().equals(name)) {
-    //             return lake;
-    //         }
-    //     }
-    //     return null;
-    // }
+    public boolean portageExists(String lakeName1, String lakeName2) {
+        Lake lake1 = findLake(lakeName1);
+        Lake lake2 = findLake(lakeName2);
+    
+        if (lake1 == null || lake2 == null) {
+            return false; // One or both lakes do not exist
+        }
+    
+        for (Portage portage : portages) {
+            if ((portage.getStart().equals(lake1) && portage.getEnd().equals(lake2)) ||
+                (portage.getStart().equals(lake2) && portage.getEnd().equals(lake1))) {
+                return true; // A direct portage exists
+            }
+        }
+        return false; // No direct portage found
+    }
+    
+    //really should be using a hashset for the following but we havent covered them in class yet
+    public boolean routeExists(String startLakeName, String endLakeName) {
+        Lake startLake = findLake(startLakeName);
+        Lake endLake = findLake(endLakeName);
+    
+        if (startLake == null || endLake == null) {
+            return false;
+        }
+    
+        return routeExistsHelper(startLake, endLake, new ArrayList<>());
+    }
+    
+    private boolean routeExistsHelper(Lake currentLake, Lake endLake, ArrayList<Lake> visited) {
+        if (currentLake == endLake) {
+            return true;
+        }
+    
+        visited.add(currentLake);
+    
+        for (Portage p : currentLake.getPortageList()) {
+            Lake nextLake = p.otherEnd(currentLake);
+            if (!visited.contains(nextLake) && routeExistsHelper(nextLake, endLake, visited)) {
+                return true;
+            }
+        }
+    
+        visited.remove(currentLake); // Ensures correct backtracking behavior
+        return false;
+    }
+    
+    public ArrayList<Route> getAllRoutes(String startLakeName, String endLakeName) {
+        ArrayList<Route> routes = new ArrayList<>();
+        Lake startLake = findLake(startLakeName);
+        Lake endLake = findLake(endLakeName);
+    
+        if (startLake == null || endLake == null) {
+            return routes;
+        }
+    
+        findRoutes(startLake, endLake, new ArrayList<>(), new ArrayList<>(), routes);
+        return routes;
+    }
+    
+    private void findRoutes(Lake currentLake, Lake endLake, ArrayList<Portage> currentPath,
+                            ArrayList<Lake> visited, ArrayList<Route> allRoutes) {
+        if (currentLake == endLake) {
+            allRoutes.add(new Route(endLake.getName(), new ArrayList<>(currentPath)));
+            return;
+        }
+    
+        visited.add(currentLake);
+    
+        for (Portage p : currentLake.getPortageList()) {
+            Lake nextLake = p.otherEnd(currentLake);
+            if (!visited.contains(nextLake)) {
+                currentPath.add(p);
+                findRoutes(nextLake, endLake, currentPath, visited, allRoutes);
+                currentPath.remove(currentPath.size() - 1);
+            }
+        }
+    
+        visited.remove(currentLake);
+    }
+    
 
 }
