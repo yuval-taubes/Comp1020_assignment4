@@ -1,13 +1,18 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Map {
-    String name;
-    ArrayList<Lake> lakes;
+    private String name;
+    private ArrayList<Lake> lakes;
+    private ArrayList<Portage> portages;
 
     public Map(String name) {
         this.name = name;
         this.lakes = new ArrayList<>();
+        this.portages = new ArrayList<>();
     }
 
     public boolean addLake(String name, String waterQual) {
@@ -30,6 +35,12 @@ public class Map {
         lake1.addPortage(newPortage);
         lake2.addPortage(newPortage);
         return true;
+    }
+    public ArrayList<Lake> getLakes(){
+        return lakes;
+    }
+    public ArrayList<Portage> getPortages(){
+        return portages;
     }
 
     public Lake findLake(String name) {
@@ -57,6 +68,7 @@ public class Map {
         return totalDistance;
     }
     
+    @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append(name).append(" contains the lakes:\n");
@@ -68,5 +80,67 @@ public class Map {
         return sb.toString();
     }
     
+       public void loadLakes(String filename) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length != 2) continue;
+                
+                String lakeName = parts[0].trim();
+                String waterQuality = parts[1].trim();
+                
+                if (getLakeByName(lakeName) != null) {
+                    System.out.println("A lake with the name " + lakeName + " already exists! Not adding again.");
+                } else {
+                    lakes.add(new Lake(lakeName, waterQuality));
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + filename);
+        }
+    }
+
+    public void loadPortages(String filename) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length != 3) continue;
+                
+                String lakeName1 = parts[0].trim();
+                String lakeName2 = parts[1].trim();
+                double distance;
+                
+                try {
+                    distance = Double.parseDouble(parts[2].trim());
+                } catch (NumberFormatException e) {
+                    System.out.println("Error in number field. Ignoring the line!");
+                    continue;
+                }
+                
+                Lake lake1 = getLakeByName(lakeName1);
+                Lake lake2 = getLakeByName(lakeName2);
+                
+                if (lake1 == null || lake2 == null) {
+                    System.out.println("Failed to add portage!");
+                    continue;
+                }
+                
+                portages.add(new Portage(lake1, lake2, distance));
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + filename);
+        }
+    }
+
+    private Lake getLakeByName(String name) {
+        for (Lake lake : lakes) {
+            if (lake.getName().equals(name)) {
+                return lake;
+            }
+        }
+        return null;
+    }
 
 }
